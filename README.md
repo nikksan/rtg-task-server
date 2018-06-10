@@ -4,19 +4,24 @@
 
 A step by step series of examples that tell you how to get a development env running
 
-Import the dummy database
+1.Install nodemon globally
+```
+npm install -g nodemon
+```
+
+2.Import the dummy database
 
 ```
 mysql -u username -p database_name < acme_app_dev.sql
 ```
 
-Install packages
+3.Install packages
 
 ```
 npm install
 ```
 
-Run the dev server
+4.Run the dev server
 
 ```
 npm start
