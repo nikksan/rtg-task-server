@@ -1,0 +1,696 @@
+openapi: '3.0.0'
+info:
+  version: '0.2'
+  title: ACME API
+  description: This API serves as the main API for the ACME website project. This API both consumes and produces JSON objects only.
+
+servers:
+  - url: 'http://localhost:3000/api'
+
+paths:
+  /user/register:
+    post:
+      description: Registers new user
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 'Authenticated response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '404':
+          description: 'User was not found'
+        '500':
+          description: General error
+  /user/login:
+    post:
+      description: Logs an existing user
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: 'Authenticated response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Auth'
+        '404':
+          description: 'User was not found'
+        '500':
+          description: General error                  
+  /user/auth:
+    post:
+      description: Logs an existing user
+      tags:
+        - Users
+      parameters:
+        - in: header
+          name: jwt
+          schema:
+            type: string
+          required: true  
+      responses:
+        '200':
+          description: 'User'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: 'User was not found'
+        '500':
+          description: General error 
+  /upload/image:
+    post:
+      description: Uploads an image file on the server
+      tags:
+        - Uploads
+      parameters:
+        - in: header
+          name: jwt
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: 'Image'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Image'
+        '500':
+          description: General error                
+  /employees:
+    get:
+      description: Lists all employees
+      tags:
+        - Employees
+      responses:
+        '200':
+          description: A list of all employees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employees'
+        '500':
+          description: General error
+    post:
+      description: Creates new employee
+      tags:
+        - Employees
+      parameters:
+        - in: header
+          name: jwt
+          schema:
+            type: string
+          required: true  
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                picture:
+                  type: string
+                big:
+                  type: integer
+      responses:
+        '200':
+          description: A list of all employees
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '500':
+          description: General error      
+
+  /employees/{id}:
+    get:
+      description: Gets information about single employee
+      tags:
+        - Employees
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The employee ID  
+      responses:
+        '200':
+          description: A details for the employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+           description: Employee was not found
+        '500':
+          description: General error
+    put:
+      description: Edits existing employee
+      tags:
+        - Employees
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The employee ID
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                picture:
+                  type: string
+                big:
+                  type: integer    
+      responses:
+        '200':
+          description: A details for the edited employee
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Employee'
+        '404':
+           description: Employee was not found
+        '500':
+          description: General error
+    delete:
+        description: Deletes existing employee
+        tags:
+          - Employees
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The employee ID
+        responses:
+          '200':
+            description: A details for the deleted employee
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Employee'
+          '404':
+             description: Employee was not found
+          '500':
+            description: General error
+  /openings:
+    get:
+      description: Lists all openings
+      tags:
+        - Openings
+      responses:
+        '200':
+          description: A list of all openings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Openings'
+        '500':
+          description: General error
+    post:
+      description: Creates new opening
+      tags:
+        - Openings
+      parameters:
+        - in: header
+          name: jwt
+          schema:
+            type: string
+          required: true  
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: A list of all openings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Openings'
+        '500':
+          description: General error      
+
+  /openings/{id}:
+    get:
+      description: Gets information about single opening
+      tags:
+        - Openings
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The opening ID  
+      responses:
+        '200':
+          description: A details for the opening
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Openings'
+        '404':
+           description: Opening was not found
+        '500':
+          description: General error
+    put:
+      description: Edits existing opening
+      tags:
+        - Openings
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The opening ID
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                   
+      responses:
+        '200':
+          description: A details for the edited opening
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Opening'
+        '404':
+           description: Opening was not found
+        '500':
+          description: General error
+    delete:
+        description: Deletes existing opening
+        tags:
+          - Openings
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The opening ID
+        responses:
+          '200':
+            description: A details for the deleted opening
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Opening'
+          '404':
+             description: Opening was not found
+          '500':
+            description: General error                              
+  /pages:
+    get:
+      description: Lists all pages
+      tags:
+        - Pages
+      responses:
+        '200':
+          description: A list of all pages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pages'
+        '500':
+          description: General error
+    post:
+      description: Creates new page
+      tags:
+        - Pages
+      parameters:
+        - in: header
+          name: jwt
+          schema:
+            type: string
+          required: true  
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                slug:
+                  type: string
+                title:
+                  type: string
+                content:
+                  type: string
+      responses:
+        '200':
+          description: A list of all pages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pages'
+        '500':
+          description: General error      
+
+  /pages/{id}:
+    get:
+      description: Gets information about single page
+      tags:
+        - Pages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The page ID  
+      responses:
+        '200':
+          description: A details for the page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pages'
+        '404':
+           description: Page was not found
+        '500':
+          description: General error
+    put:
+      description: Edits existing page
+      tags:
+        - Pages
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The page ID
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                slug:
+                  type: string
+                title:
+                  type: string  
+                description:
+                  type: string
+                   
+      responses:
+        '200':
+          description: A details for the edited page
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '404':
+           description: Page was not found
+        '500':
+          description: General error
+    delete:
+        description: Deletes existing page
+        tags:
+          - Pages
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: integer
+              minimum: 1
+            description: The page ID
+        responses:
+          '200':
+            description: A details for the deleted page
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Page'
+          '404':
+             description: Page was not found
+          '500':
+            description: General error
+components:
+  schemas:
+    BaseResponse:
+      type: object
+      required:
+        - data
+        - error
+      properties:
+        data:
+          type: object
+          nullable: true
+          description: The response data
+        error:
+          type: string
+          nullable: true
+          description: Error information
+
+    Employees:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - name
+                  - type
+                  - big
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+                    description: The employee's name
+                  picture:
+                    type: string
+                    format: uri
+                    description: The path to the employee's avatar
+                  big:
+                    type: boolean
+                    description: Whether or not the employee is part of management
+
+    Openings:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - title
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                    description: The job title for this opening
+
+
+    Opening:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - id
+                - title
+                - description
+              properties:
+                id:
+                  type: integer
+                title:
+                  type: string
+                  description: The job title for this opening
+                description:
+                  type: string
+                  description: Extra job opening description
+    Employee:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - id
+                - name
+                - picture
+                - big
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                  description: The name of the employee
+                picture:
+                  type: string
+                  description: The picture of the employee  
+                big:
+                  type: string
+                  description: The rank of the employee              
+    Page:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - id
+                - slug
+                - title
+                - content
+              properties:
+                id:
+                  type: integer
+                slug:
+                  type: string
+                  description: The seo friendly url
+                title:
+                  type: string
+                  description: The title for this page
+                content:
+                  type: string
+                  description: Content of the page
+    Pages:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                type: object
+                required:
+                  - id
+                  - title
+                  - slug
+                  - content
+                properties:
+                  id:
+                    type: integer
+                  title:
+                    type: string
+                    description: The page title
+                  slug:
+                    type: string
+                    description: The page slug
+                  content:
+                    type: string
+                    description: Content of the page               
+    User:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+                - id
+                - username
+              properties:
+                id:
+                  type: integer
+                username:
+                  type: string
+                  description: The username of the user
+    Auth:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+               - token
+              properties:
+                token:
+                  type: string
+                  description: The token received after succesful login
+    Image:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              required:
+               - image
+              properties:
+                image:
+                  type: string
+                  description: The filepath of the uploaded image                                                  
