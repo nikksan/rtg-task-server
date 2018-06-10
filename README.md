@@ -1,7 +1,4 @@
-# Project Title
-
-RTG Task: Server App
-
+# RTG Task: Server App
 
 ### Installing
 
